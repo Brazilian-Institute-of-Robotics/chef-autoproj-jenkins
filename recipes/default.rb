@@ -35,6 +35,7 @@ plugins = [
   "workflow-step-api",
   "pipeline-stage-step",
   "pipeline-stage-view",
+  "pipeline-utility-steps",
   "script-security",
   "job-dsl",
   "git",
