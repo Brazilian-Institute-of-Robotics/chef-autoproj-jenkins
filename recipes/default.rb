@@ -7,6 +7,8 @@
 require 'openssl'
 require 'net/ssh'
 
+package 'zlib1g-dev'
+
 sudo 'jenkins' do
     group 'jenkins'
     nopasswd true
