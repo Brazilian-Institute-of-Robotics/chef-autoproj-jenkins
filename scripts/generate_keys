@@ -1,0 +1,51 @@
+#! /usr/bin/env ruby
+
+require 'base64'
+require 'openssl'
+require 'fileutils'
+require 'tempfile'
+require 'json'
+
+if File.file?('data_bag_secret')
+    raise "data_bag_secret already exists, delete before running this script"
+elsif File.file?(File.join('data_bags', 'jenkins', 'auth.json'))
+    raise "the local data bag already has a jenkins/auth item, delete before running this script"
+end
+
+# Generate the data bag private key
+data_bag_secret = OpenSSL::Random.random_bytes(24)
+File.open("data_bag_secret", 'w') do |io|
+    io.flush
+    FileUtils.chmod 0600, "data_bag_secret"
+    io.write Base64.strict_encode64(data_bag_secret).tr("\n", "")
+end
+
+# Generate keys for admin and autoproj-jenkins
+admin_key    = OpenSSL::PKey::RSA.new(4096).to_pem
+admin_password = Base64.strict_encode64(OpenSSL::Random.random_bytes(24)).tr("\n", "")
+autoproj_key = OpenSSL::PKey::RSA.new(4096).to_pem
+STDERR.puts "Please provide the password for the BIR user"
+bir_password = STDIN.readline.chomp
+
+# Writing the whole things to disk sounds bad ... unless you consider that we
+# actually write the data bag secret key itself to disk *and leave it there*
+Tempfile.open(['chef', '.json']) do |io|
+    item = Hash['id' => 'auth',
+                'admin_key' => admin_key,
+                'admin_password' => admin_password,
+                'autoproj-jenkins' => autoproj_key,
+                'bir' => bir_password]
+    io.puts item.to_json
+    io.flush
+
+    FileUtils.mkdir_p File.join('data_bags', 'jenkins')
+    result = system("knife", "data", "bag", "from", "file",
+        "--local-mode",
+        "--secret-file", "data_bag_secret",
+        "jenkins", io.path)
+    if !result
+        raise "failed to create the data bag"
+    end
+end
+
+
