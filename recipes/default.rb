@@ -8,6 +8,7 @@ require 'openssl'
 require 'net/ssh'
 
 package 'zlib1g-dev'
+package 'libsaxonb-java'
 
 sudo 'jenkins' do
     group 'jenkins'
@@ -44,11 +45,18 @@ plugins = [
   "ansicolor",
   "greenballs",
   "PrioritySorter",
-  "embeddable-build-status"
+  "embeddable-build-status",
+  "copyartifact",
+  'xunit',
+  'dashboard-view',
+  'purge-build-queue-plugin'
 ]
 
-plugins.each_with_index do |plugin, index|
+plugins.each_with_index do |(plugin, plugin_version), index|
     jenkins_plugin plugin do
+        if plugin_version
+            version plugin_version
+        end
 	# we want to restart Jenkins after the last plugin installation
 	notifies :execute, "jenkins_command[safe-restart]", :immediately if index == plugins.length - 1
     end
