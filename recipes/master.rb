@@ -7,6 +7,9 @@
 require 'openssl'
 require 'net/ssh'
 
+package 'ruby'
+package 'ruby-dev'
+package 'build-essential'
 package 'zlib1g-dev'
 package 'libsaxonb-java'
 
@@ -36,7 +39,6 @@ plugins = [
   "workflow-step-api",
   "pipeline-stage-step",
   "pipeline-stage-view",
-  "pipeline-utility-steps",
   "script-security",
   "job-dsl",
   "git",
@@ -46,10 +48,12 @@ plugins = [
   "greenballs",
   "PrioritySorter",
   "embeddable-build-status",
+  "pipeline-utility-steps",
   "copyartifact",
   'xunit',
   'dashboard-view',
-  'purge-build-queue-plugin'
+  'purge-build-queue-plugin',
+  'credentials-binding'
 ]
 
 plugins.each_with_index do |(plugin, plugin_version), index|
@@ -62,13 +66,9 @@ plugins.each_with_index do |(plugin, plugin_version), index|
     end
 end
 
-jenkins_auth = data_bag_item('jenkins', 'auth')
-def public_key_of(secret_key)
-    key = OpenSSL::PKey::RSA.new(secret_key)
-    "#{key.ssh_type} #{[key.to_blob].pack('m0')} auto-generated key"
-end
+include_recipe "#{cookbook_name}::_auth"
 
-node.run_state[:jenkins_private_key] = jenkins_auth['admin_key']
+jenkins_auth = data_bag_item('jenkins', 'auth')
 admin_public_key = public_key_of(jenkins_auth['admin_key'])
 jenkins_user 'admin' do
     password jenkins_auth['admin_password']
