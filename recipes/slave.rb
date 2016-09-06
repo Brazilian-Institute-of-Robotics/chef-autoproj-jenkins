@@ -6,6 +6,6 @@ end
 package 'default-jre'
 jenkins_jnlp_slave node.name do
     description 'generic slave builder'
-    executors 6
+    executors (node['cpu']['cores'] * 1.5).ceil
 end
 
