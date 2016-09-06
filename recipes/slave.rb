@@ -4,6 +4,7 @@ if node['autoproj']['dev']
     include_recipe "#{cookbook_name}::_autoproj_dev"
 end
 package 'default-jre'
+include_recipe "#{cookbook_name}::_common"
 jenkins_jnlp_slave node.name do
     description 'generic slave builder'
     executors (node['cpu']['cores'] * 1.5).ceil

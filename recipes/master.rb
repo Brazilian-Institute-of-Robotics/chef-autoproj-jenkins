@@ -9,19 +9,8 @@ require 'net/ssh'
 
 if node['autoproj']['dev']
     include_recipe "#{cookbook_name}::_autoproj_dev"
-package 'ruby'
-package 'ruby-dev'
-package 'build-essential'
-package 'zlib1g-dev'
-package 'libsaxonb-java'
-
-sudo 'jenkins' do
-    group 'jenkins'
-    nopasswd true
-    commands ['/usr/bin/apt-get']
-    env_keep_add ['DEBIAN_FRONTEND']
 end
-
+include_recipe "#{cookbook_name}::_common"
 include_recipe 'jenkins::master'
 
 jenkins_command 'safe-restart' do
