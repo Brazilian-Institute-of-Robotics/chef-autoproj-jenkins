@@ -66,18 +66,23 @@ plugins.each_with_index do |(plugin, plugin_version), index|
     end
 end
 
-include_recipe "#{cookbook_name}::_auth"
+
+
+
 
 jenkins_auth = data_bag_item('jenkins', 'auth')
-admin_public_key = public_key_of(jenkins_auth['admin_key'])
+node.run_state[:jenkins_private_key] = jenkins_auth['admin_key']
+
+admin_public_key = ChefAutoprojJenkins.public_key_of(jenkins_auth['admin_key'])
 jenkins_user 'admin' do
     password jenkins_auth['admin_password']
     public_keys [admin_public_key]
 end
+
 jenkins_user 'bir' do
     password jenkins_auth['bir']
 end
-autoproj_jenkins_public_key = public_key_of(jenkins_auth['autoproj-jenkins'])
+autoproj_jenkins_public_key = ChefAutoprojJenkins.public_key_of(jenkins_auth['autoproj-jenkins'])
 jenkins_user 'autoproj-jenkins' do
     public_keys [autoproj_jenkins_public_key]
 end
