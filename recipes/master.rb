@@ -117,6 +117,7 @@ jenkins_script 'auth' do
     def strategy = new GlobalMatrixAuthorizationStrategy()
 
     strategy.add(Jenkins.ADMINISTER, "admin")
+    strategy.add(hudson.model.Run.ARTIFACTS, "admin")
 
     strategy.add(hudson.model.Job.BUILD,  "autoproj-jenkins")
     strategy.add(hudson.model.Job.CREATE,  "autoproj-jenkins")
@@ -127,6 +128,7 @@ jenkins_script 'auth' do
     strategy.add(hudson.model.Job.CANCEL, "bir")
     strategy.add(hudson.model.Item.READ,  "bir")
     strategy.add(hudson.model.View.READ,  "bir")
+    strategy.add(hudson.model.Run.ARTIFACTS, "bir")
 
     //check for equality, no need to modify the runtime if no settings changed
     if (!strategy.equals(instance.getAuthorizationStrategy())) {
@@ -135,4 +137,3 @@ jenkins_script 'auth' do
     }
   EOH
 end
-
