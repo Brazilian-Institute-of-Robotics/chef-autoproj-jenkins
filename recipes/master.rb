@@ -53,7 +53,8 @@ plugins = [
   'xunit',
   'dashboard-view',
   'purge-build-queue-plugin',
-  'credentials-binding'
+  'credentials-binding',
+  'subversion'
 ]
 
 plugins.each_with_index do |(plugin, plugin_version), index|
