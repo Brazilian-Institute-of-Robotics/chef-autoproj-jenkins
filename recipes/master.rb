@@ -7,6 +7,8 @@
 require 'openssl'
 require 'net/ssh'
 
+if node['autoproj']['dev']
+    include_recipe "#{cookbook_name}::_autoproj_dev"
 package 'ruby'
 package 'ruby-dev'
 package 'build-essential'
