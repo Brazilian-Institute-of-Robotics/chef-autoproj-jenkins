@@ -79,6 +79,19 @@ jenkins_user 'autoproj-jenkins' do
     public_keys [autoproj_jenkins_public_key]
 end
 
+autoproj_cli_credentials = node['autoproj-jenkins']['cli-credentials']
+jenkins_password_credentials autoproj_cli_credentials['user'] do
+    id autoproj_cli_credentials['id']
+    description "credentials used by the generated 'buildconf' job to manage the separate build jobs"
+    if password = autoproj_cli_credentials['password']
+        password password
+    elsif autoproj_cli_credentials['user'] == 'admin'
+        password jenkins_auth['admin_password']
+    else
+        raise "the autoproj-jenkins/cli-credentials/user is not 'admin', you must set a password explicitely"
+    end
+end
+
 # This configures authentication
 jenkins_script 'auth' do
   command <<-EOH.gsub(/^ {4}/, '')
