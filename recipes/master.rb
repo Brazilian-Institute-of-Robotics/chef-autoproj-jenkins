@@ -33,7 +33,6 @@ plugins = [
   "script-security",
   "job-dsl",
   "git",
-  "github-oauth",
   "warnings",
   "ansicolor",
   "greenballs",
@@ -99,7 +98,6 @@ jenkins_script 'auth' do
     import hudson.security.HudsonPrivateSecurityRealm
     import hudson.security.csrf.DefaultCrumbIssuer
     import hudson.security.GlobalMatrixAuthorizationStrategy
-    import org.jenkinsci.plugins.GithubSecurityRealm
     def instance = Jenkins.getInstance()
 
     if (!instance.isUseCrumbs())
