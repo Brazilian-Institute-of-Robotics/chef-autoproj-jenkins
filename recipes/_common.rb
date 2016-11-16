@@ -1,3 +1,5 @@
+include_recipe 'locale::default'
+
 package 'ruby'
 
 # The Jenkins CLI gem that autoproj-jenkins needs depends on a C extension ...

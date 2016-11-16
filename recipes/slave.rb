@@ -10,5 +10,9 @@ jenkins_jnlp_slave node.name do
     executors (node['cpu']['cores'] * 1.5).ceil
     labels ['autoproj-jenkins']
     remote_fs '/var/lib/jenkins' # must match the JENKINS_HOME on the master
+    environment(
+        'LANG' => "en_US.UTF-8",
+        'LC_ALL' => "en_US.UTF-8"
+    )
 end
 
