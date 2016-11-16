@@ -13,6 +13,8 @@ end
 include_recipe "#{cookbook_name}::_common"
 include_recipe 'jenkins::master'
 
+resources("package[jenkins]").action(:upgrade)
+
 jenkins_command 'safe-restart' do
     action :nothing
 end
